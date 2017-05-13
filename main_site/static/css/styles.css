@@ -1,0 +1,32 @@
+html {}
+.users-sidebar {
+	float:right;
+	width:30%;
+	min-width:200px;
+	height:auto;
+	min-height:150px;
+	font-size:20px;
+}
+
+
+.content {
+	float:left;
+	width:60%;
+	min-width:100px;
+	height:auto;
+	min-height:300px;
+}
+
+.article {
+	float:left;
+	padding:40px;
+	width:60%;
+	border:2px solid #000214;
+	margin:20px;
+}
+
+.edit-command {text-align:right}
+.div-greetings {
+	float:right;
+	margin-right:50px;
+}

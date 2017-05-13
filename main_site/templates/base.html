@@ -1,0 +1,28 @@
+﻿{% load static %}
+{% load staticfiles %}
+<html>
+	<head>
+		<title>Заголовок</title>
+		<link href="{% static 'css/styles.css' %}" rel="stylesheet">
+	</head>
+	<body>
+	<div class='div-greetings'>
+		<p>Привет, {{current_username}}</p>
+		{% if user.is_authenticated%}
+			<p><a href="{% url 'blog_page' username=current_username %}">Мой блог</a></p>
+			<p><a href="{% url 'add_post' %}">Добавить пост</a></p>
+			{{request.url.path}}
+			<p><a href="#">Выйти</a></p>{% endif %}
+	</div>
+		<h1><a href='/'>Главная</a></h1>
+		<h2>Текущая страница - {{title}}</h2>
+			{% block content %}
+			{% endblock %}
+			<div class='users-sidebar'>
+		<h1>Наши пользователи</h1>
+		{% for user in all_users %}
+			<a href="{% url 'blog_page' username=user.username %}">{{user.username}}</a>
+		{% endfor %}
+		</div>
+	</body>
+</html>
