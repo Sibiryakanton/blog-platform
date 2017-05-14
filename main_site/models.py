@@ -18,13 +18,10 @@ class BlogPost(models.Model):
 	def __str__(self):
 		return self.title
 	
-	@models.permalink
-	def get_absolute_url(self):
-		return ('post_page', (), {'username': self.author.username,'post_pk': self.pk,})
-	
 
-	def test_url(self):
-		return reverse('post_page', args=[self.author.username, self.pk])
+	def get_absolute_url(self):
+		url = reverse('post_page', args=[self.author.username, self.pk])
+		return url
 		
 	def save(self,*args, **kwargs ):
 	
@@ -43,7 +40,7 @@ class BlogPost(models.Model):
 					recipients.append(user.email)
 			message = '''
 				У пользователя {0} в блоге появилась новая запись!Ссылка:
-				{1}'''.format(self.author, self.test_url()) #self.get_absolute_url()
+				{1}'''.format(self.author, self.get_absolute_url()) #self.get_absolute_url()
 			subject= 'Новый пост'
 			send_mail(subject, message, mail_host, recipients, fail_silently=False)
 			self.order_to_sent=False #Двойная проверка нужна на случай,если пользователь захочет оповестить несколько раз

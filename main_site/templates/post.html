@@ -13,8 +13,8 @@
 		<p>{{post.text}}</p>
 		<div class='edit-command'>
 			<p>{{post.date_published}}</p>
-			{% if blog_author == request.user.username %}
-			<a href='#'>Редактировать</a>
+			{% if post.author.username == request.user.username %}
+			<a href='{% url "edit_post" username=post.author.username post_pk=post.pk %}'>Редактировать</a>
 			{% endif %}
 		</div>
 	</div>
