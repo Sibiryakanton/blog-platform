@@ -102,3 +102,22 @@ def send_mail(request):
 	subject= 'Новый пост'
 	send_mail(subject, message, mail_host.mail, recipients, fail_silently=False)
 	return redirect('/')
+	
+def exit(request):
+	logout(request)
+	return redirect('/')
+	
+def enter(request):
+	username = request.POST.get('username','')
+	password = request.POST.get('password','')
+	
+	user = authenticate(username=username, password=password)
+	error=''
+	if user is not None:
+		login(request,user)
+		result = redirect('/')
+	else:
+		error = 'Неправильный логин или пароль'
+		form = AuthForm()
+		result = render(request, 'login.html', {'form':form, 'error':error})
+	return result

@@ -8,4 +8,6 @@ urlpatterns = [
 	url(r'^note/(?P<post_id>\d+)/$', views.note, name='note'),
 	url(r'^subscribe/(?P<username>[-\w]+)/$', views.subscribe, name='subscribe'),
 	url(r'^unsubscribe/(?P<username>[-\w]+)/$', views.unsubscribe, name='unsubscribe'),
+	url(r'^logout/$', views.exit, name='logout'),
+	url(r'^login/$', views.enter, name='login'),
 ]
