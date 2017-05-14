@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.contrib.sites.shortcuts import get_current_site
 
+from django.urls import reverse
 from django.core.mail import send_mail
 class BlogPost(models.Model):
 	class Meta:
@@ -22,6 +22,10 @@ class BlogPost(models.Model):
 	def get_absolute_url(self):
 		return ('post_page', (), {'username': self.author.username,'post_pk': self.pk,})
 	
+
+	def test_url(self):
+		return reverse('post_page', args=[self.author.username, self.pk])
+		
 	def save(self,*args, **kwargs ):
 	
 		current_blog = PersonalBlog.objects.get(author=self.author)
@@ -39,7 +43,7 @@ class BlogPost(models.Model):
 					recipients.append(user.email)
 			message = '''
 				У пользователя {0} в блоге появилась новая запись!Ссылка:
-				{1}'''.format(self.author, self.get_absolute_url())
+				{1}'''.format(self.author, self.test_url()) #self.get_absolute_url()
 			subject= 'Новый пост'
 			send_mail(subject, message, mail_host, recipients, fail_silently=False)
 			self.order_to_sent=False #Двойная проверка нужна на случай,если пользователь захочет оповестить несколько раз
