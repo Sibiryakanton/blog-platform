@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.contrib.sites.shortcuts import get_current_site
 
 from django.core.mail import send_mail
 class BlogPost(models.Model):
@@ -16,7 +17,11 @@ class BlogPost(models.Model):
 	already_sent = models.BooleanField('Уведомления разосланы', default=False)
 	def __str__(self):
 		return self.title
-
+	
+	@models.permalink
+	def get_absolute_url(self):
+		return ('post_page', (), {'username': self.author.username,'post_pk': self.pk,})
+	
 	def save(self,*args, **kwargs ):
 	
 		current_blog = PersonalBlog.objects.get(author=self.author)
@@ -27,15 +32,14 @@ class BlogPost(models.Model):
 			mail_host = "oriflamesender@gmail.com" 
 			user_list = User.objects.all()
 			recipients= []
-			post_url = "/blogs/{0}/".format(self.author.username)
 			for user in user_list:
 				if user.email=='' or user.email==self.author.email:
 					continue
 				else:
 					recipients.append(user.email)
 			message = '''
-				В блоге {0} появилась новая запись!Ссылка:
-				{1}'''.format(self.author, str(post_url))
+				У пользователя {0} в блоге появилась новая запись!Ссылка:
+				{1}'''.format(self.author, self.get_absolute_url())
 			subject= 'Новый пост'
 			send_mail(subject, message, mail_host, recipients, fail_silently=False)
 			self.order_to_sent=False #Двойная проверка нужна на случай,если пользователь захочет оповестить несколько раз
