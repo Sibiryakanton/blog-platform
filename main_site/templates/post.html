@@ -1,9 +1,22 @@
-﻿<html>
-	<head>
-		<title>Заголовок</title>
-	</head>
-	<body>
-		<p>Тестовая страница</p>
-		{{text}}
-	</body>
-</html>
+﻿{% extends 'base.html' %}
+
+{% block content %}
+{% if blog_author != request.user.username and user.is_authenticated %}
+	{% if not check_feed_exist %}
+	<p><a href='{% url "subscribe" user_name=blog_author %}'>Подписаться</a></p>
+	{% else %}
+	<p>Вы уже подписаны. <a href='{% url "unsubscribe" user_name=blog_author %}'>Отписаться</a></p>
+	{% endif %}
+{% endif %}
+	<div class='article'>
+		<h1>{{post.title}}</h1>
+		<p>{{post.text}}</p>
+		<div class='edit-command'>
+			<p>{{post.date_published}}</p>
+			{% if blog_author == request.user.username %}
+			<a href='#'>Редактировать</a>
+			{% endif %}
+		</div>
+	</div>
+	
+{% endblock %}

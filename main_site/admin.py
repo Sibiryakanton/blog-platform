@@ -7,12 +7,11 @@ admin.site.register(PersonalBlog)
 class BlogPostAdmin(admin.ModelAdmin):
     form = BlogPostForm
     
-    list_display = ('author','title', 'slug','date_published', 'already_sent')
+    list_display = ('date_published','author','title', 'already_sent')
     list_display_links = ('title',)
     list_per_page = 50
-    ordering = ['title']
+    ordering = ['-date_published']
     search_field = ['title']
     exclude=()
-    prepopulated_fields={'slug':('title',)}
 	
 admin.site.register(BlogPost, BlogPostAdmin)

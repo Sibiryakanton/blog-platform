@@ -3,19 +3,19 @@
 {% block content %}
 {% if blog_author != request.user.username and user.is_authenticated %}
 	{% if not check_feed_exist %}
-	<p><a href='{% url "subscribe" username=blog_author %}'>Подписаться</a></p>
+	<p><a href='{% url "subscribe" user_name=blog_author %}'>Подписаться</a></p>
 	{% else %}
-	<p>Вы уже подписаны. <a href='{% url "unsubscribe" username=blog_author %}'>Отписаться</a></p>
+	<p>Вы уже подписаны. <a href='{% url "unsubscribe" user_name=blog_author %}'>Отписаться</a></p>
 	{% endif %}
 {% endif %}
 {% for post in blog_posts %}
 	<div class='article'>
-		<h1>{{post.title}}</h1>
+		<h1><a href='{% url "post_page" post_pk=post.pk username=post.author.username %}'>{{post.title}}</a></h1>
 		<p>{{post.text}}</p>
 		<div class='edit-command'>
 			<p>{{post.date_published}}</p>
 			{% if blog_author == request.user.username %}
-			<a href='#'>Редактировать</a>
+			<a href='{% url "edit_post" username=post.author.username post_pk=post.pk %}'>Редактировать</a>
 			{% endif %}
 		</div>
 	</div>
