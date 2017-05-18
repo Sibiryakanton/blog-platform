@@ -158,14 +158,17 @@ class unsubscribe(View):
         blog_owner = User.objects.get(username=user_name)
         blog = PersonalBlog.objects.get(author=blog_owner)
         self_user_info = PersonalBlog.objects.get(author=request.user)
+        noted_posts_of_author = self_user_info.noted.filter(author=blog_owner)#Поиск в M2M-поле посты 
+        #автора блога, от которого отписывается пользователь
         
-        session = request.session
-        notelist = session.get(settings.FEED_SESSION_ID)
-    
+        for noted_element in noted_posts_of_author:
+            self_user_info.noted.remove(noted_element) #Попытка удаления
+        
         self_user_info.feeds.remove(blog.author)
         blog.followers.remove(self_user_info.author)
-        manager = FeedManager(request)   
-        manager.remove(current_post)
+        self_user_info.save()
+        '''manager = FeedManager(request)   
+        manager.remove(current_post)'''
         return redirect('/')
 
 class note(View):
