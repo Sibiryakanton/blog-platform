@@ -64,6 +64,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 				'context.base_context.base_context',
+				'context.base_context.feed_list',
             ],
         },
     },
@@ -132,3 +133,5 @@ EMAIL_USE_TLS=True
 EMAIL_HOST_USER = 'oriflamesender'
 EMAIL_HOST_PASSWORD= 'qjzxtfg23'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+FEED_SESSION_ID='blog-platform'

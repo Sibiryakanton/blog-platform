@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, FormView, View
 from django.contrib.auth.models import User
 
+from django.conf import settings
+
 from .models import *
 from .forms import *
 from django import forms
@@ -12,6 +14,8 @@ from django.views.generic import TemplateView
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
 
+from .note import FeedManager
+
 class index(TemplateView): #Главная страница, она же фид-лента (если пользователь анонимен, отображается форма входа)
     def get(self,request, *args, **kwargs):
         if request.user in User.objects.all():
@@ -20,8 +24,8 @@ class index(TemplateView): #Главная страница, она же фид-
             blog_user_info = PersonalBlog.objects.get(author=request.user) #Информация о читателе
             noted_list = blog_user_info.noted.all()
             feed_list = blog_user_info.feeds.all()
-            post_list = BlogPost.objects.filter(author__in=feed_list).order_by('-date_published')        
-            context = { 'title':title, 'post_list':post_list, 'noted_list':noted_list}
+            post_list = BlogPost.objects.filter(author__in=feed_list).order_by('-date_published')
+            context = { 'title':title, 'post_list':post_list, 'noted_list':noted_list,}
         else: #Если пользователь авторизован, показываем ленту, иначе отправляем на форму входа
             template_name='login.html'
             title = 'Форма входа'
@@ -130,7 +134,7 @@ class subscribe(View):
         self_user_info.feeds.add(blog.author)
         blog.followers.add(self_user_info.author)
         return redirect('/')
-
+'''
 class unsubscribe(View):
     def get(self,request, user_name): #Обработчик подписки с редиректом на главную
         blog_owner = User.objects.get(username=user_name)
@@ -138,6 +142,7 @@ class unsubscribe(View):
         self_user_info = PersonalBlog.objects.get(author=request.user)
         self_user_info.feeds.remove(blog.author)
         blog.followers.remove(self_user_info.author)
+        
         return redirect('/')
 
 class note(View):
@@ -146,7 +151,31 @@ class note(View):
         reader_info = PersonalBlog.objects.get(author = request.user)
         reader_info.noted.add(current_post)
         return redirect('/')
+'''
+
+class unsubscribe(View):
+    def get(self,request, user_name): #Обработчик подписки с редиректом на главную
+        blog_owner = User.objects.get(username=user_name)
+        blog = PersonalBlog.objects.get(author=blog_owner)
+        self_user_info = PersonalBlog.objects.get(author=request.user)
+        
+        session = request.session
+        notelist = session.get(settings.FEED_SESSION_ID)
     
+        self_user_info.feeds.remove(blog.author)
+        blog.followers.remove(self_user_info.author)
+        manager = FeedManager(request)   
+        manager.remove(current_post)
+        return redirect('/')
+
+class note(View):
+    def get(self,request, post_id): #Обрабтчик клика на кнопку "Уже прочитано"
+        current_post = BlogPost.objects.get(pk=post_id)
+        reader_info = PersonalBlog.objects.get(author = request.user)
+        reader_info.noted.add(current_post) # Этой строкой мы сохраняем номер в БД. Альтернатива - хранение в сессии - закомментирована
+        '''manager = FeedManager(request)   
+        manager.add(current_post)''' #здесь. Внимание: номера комментируются без учета авторизованного пользователя.
+        return redirect('/')   
 
 class exit(View):
     def get(self,request):

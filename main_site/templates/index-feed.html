@@ -12,7 +12,7 @@
 			<div class='edit-command'>
 			<p>{{post.date_published}}</p>
 			<p>Автор: {{post.author}}</p>
-			{% if post in noted_list %}
+			{% if post in noted_list or post.pk in test_list %}
 			<p>Прочитано</p>
 			{% else %}
 				<p><a href='{% url "note" post_id=post.pk %}'>Отметить прочитанным</a></p>
