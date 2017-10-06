@@ -3,6 +3,7 @@ from django.contrib import admin
 from . import views
 urlpatterns = [
     url(r'^$', views.index.as_view(), name='index'),
+    url(r'^(?P<ordering>[-\w]+)/$', views.index.as_view(), name='index2'),
     url(r'^blogs/(?P<username>[-\w]+)/$', views.blog_page.as_view(), name='blog_page'),
     url(r'^blogs/(?P<username>[-\w]+)/(?P<post_pk>[0-9]+)/$', views.post_page.as_view(), name='post_page'),
     url(r'^add_post/$', views.add_post.as_view(), name='add_post'),
